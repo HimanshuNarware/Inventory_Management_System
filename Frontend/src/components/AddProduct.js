@@ -37,7 +37,7 @@ export default function AddProduct({
     // Show loading toast
     const loadingToastId = toast.loading('Adding product...');
 
-    fetch('http://localhost:4000/api/product/add', {
+    fetch(`${process.env.REACT_APP_BACKEND_URL}api/product/add`, {
       method: 'POST',
       headers: {
         'Content-type': 'application/json',

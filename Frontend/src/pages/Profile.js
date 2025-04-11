@@ -36,7 +36,7 @@ function Profile() {
 
         // Fetch user profile from API
         const response = await fetch(
-          `http://localhost:4000/api/user/profile/${userData._id}`
+          `${process.env.REACT_APP_BACKEND_URL}api/user/profile/${userData._id}`
         );
 
         if (!response.ok) {
@@ -107,7 +107,7 @@ function Profile() {
     try {
       // Send update to backend API
       const response = await fetch(
-        `http://localhost:4000/api/user/profile/${user._id}`,
+        `${process.env.REACT_APP_BACKEND_URL}api/user/profile/${user._id}`,
         {
           method: 'PUT',
           headers: {
@@ -175,7 +175,7 @@ function Profile() {
       // Then update profile image in backend
       if (user && user._id) {
         const apiResponse = await fetch(
-          `http://localhost:4000/api/user/profile/${user._id}/image`,
+          `${process.env.REACT_APP_BACKEND_URL}api/user/profile/${user._id}/image`,
           {
             method: 'PUT',
             headers: {

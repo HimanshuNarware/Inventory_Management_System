@@ -33,7 +33,7 @@ function Inventory() {
       : null;
 
     fetch(
-      `http://localhost:4000/api/product/get/${
+      `${process.env.REACT_APP_BACKEND_URL}api/product/get/${
         authContext.user || 'guest-user-id'
       }`
     )
@@ -67,7 +67,7 @@ function Inventory() {
 
     const loadingToastId = toast.loading('Searching products...');
 
-    fetch(`http://localhost:4000/api/product/search?searchTerm=${searchTerm}`)
+    fetch(`${process.env.REACT_APP_BACKEND_URL}api/product/search?searchTerm=${searchTerm}`)
       .then((response) => {
         if (!response.ok) {
           return response.json().then((data) => {
@@ -95,7 +95,7 @@ function Inventory() {
   // Fetching all stores data
   const fetchSalesData = () => {
     fetch(
-      `http://localhost:4000/api/store/get/${
+      `${process.env.REACT_APP_BACKEND_URL}api/store/get/${
         authContext.user || 'guest-user-id'
       }`
     )
@@ -131,8 +131,8 @@ function Inventory() {
   // Delete item
   const deleteItem = (id) => {
     console.log('Product ID: ', id);
-    console.log(`http://localhost:4000/api/product/delete/${id}`);
-    fetch(`http://localhost:4000/api/product/delete/${id}`)
+    console.log(`${process.env.REACT_APP_BACKEND_URL}api/product/delete/${id}`);
+    fetch(`${process.env.REACT_APP_BACKEND_URL}api/product/delete/${id}`)
       .then((response) => response.json())
       .then((data) => {
         setUpdatePage(!updatePage);

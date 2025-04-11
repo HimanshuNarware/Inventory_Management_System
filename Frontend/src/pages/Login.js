@@ -21,7 +21,7 @@ function Login() {
 
   const authCheck = () => {
     setTimeout(() => {
-      fetch('http://localhost:4000/api/login')
+      fetch(`${process.env.REACT_APP_BACKEND_URL}api/login`)
         .then((response) => response.json())
         .then((data) => {
           authContext.notify('Successfully logged in!', 'success');
@@ -39,7 +39,7 @@ function Login() {
 
   // Handle guest login
   const handleGuestLogin = () => {
-    fetch('http://localhost:4000/api/guest-login')
+    fetch(`${process.env.REACT_APP_BACKEND_URL}api/guest-login`)
       .then((response) => response.json())
       .then((data) => {
         authContext.notify('Logged in as Guest', 'info');
@@ -65,7 +65,7 @@ function Login() {
       // Show loading toast
       const loadingToastId = toast.loading('Logging in...');
 
-      fetch('http://localhost:4000/api/login', {
+      fetch(`${process.env.REACT_APP_BACKEND_URL}api/login`, {
         method: 'POST',
         headers: {
           'Content-type': 'application/json',

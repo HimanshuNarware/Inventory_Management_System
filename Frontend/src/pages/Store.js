@@ -23,7 +23,7 @@ function Store() {
       : null;
 
     fetch(
-      `http://localhost:4000/api/store/get/${
+      `${process.env.REACT_APP_BACKEND_URL}api/store/get/${
         authContext.user || 'guest-user-id'
       }`
     )
