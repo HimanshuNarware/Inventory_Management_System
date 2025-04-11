@@ -27,7 +27,7 @@ function ForgotPassword() {
     const loadingToastId = toast.loading('Processing your request...');
     
     try {
-      const response = await fetch('http://localhost:4000/api/user/forgot-password', {
+      const response = await fetch(`${process.env.REACT_APP_BACKEND_URL}api/user/forgot-password`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

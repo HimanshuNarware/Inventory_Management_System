@@ -11,7 +11,7 @@ const salesRoute = require('./router/sales');
 const userRoute = require('./router/user');
 const cors = require('cors');
 const User = require('./models/users');
-const Product = require('./models/Product');
+const Product = require('./models/product');
 const rateLimit = require('express-rate-limit');
 const morgan=require('morgan');
 

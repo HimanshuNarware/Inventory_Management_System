@@ -213,7 +213,7 @@ function Dashboard() {
   const fetchTotalSaleAmount = () => {
     return new Promise((resolve, reject) => {
       fetch(
-        `http://localhost:4000/api/sales/get/${authContext.user}/totalsaleamount`
+        `${process.env.REACT_APP_BACKEND_URL}api/sales/get/${authContext.user}/totalsaleamount`
       )
         .then((response) => {
           if (!response.ok) {
@@ -251,7 +251,7 @@ function Dashboard() {
   const fetchTotalPurchaseAmount = () => {
     return new Promise((resolve, reject) => {
       fetch(
-        `http://localhost:4000/api/purchase/get/${authContext.user}/totalpurchaseamount`
+        `${process.env.REACT_APP_BACKEND_URL}api/purchase/get/${authContext.user}/totalpurchaseamount`
       )
         .then((response) => {
           if (!response.ok) {
@@ -288,7 +288,7 @@ function Dashboard() {
   // Fetching all stores data
   const fetchStoresData = () => {
     return new Promise((resolve, reject) => {
-      fetch(`http://localhost:4000/api/store/get/${authContext.user}`)
+      fetch(`${process.env.REACT_APP_BACKEND_URL}api/store/get/${authContext.user}`)
         .then((response) => {
           if (!response.ok) {
             throw new Error('Failed to fetch stores data');
@@ -332,7 +332,7 @@ function Dashboard() {
   // Fetching Data of All Products
   const fetchProductsData = () => {
     return new Promise((resolve, reject) => {
-      fetch(`http://localhost:4000/api/product/get/${authContext.user}`)
+      fetch(`${process.env.REACT_APP_BACKEND_URL}api/product/get/${authContext.user}`)
         .then((response) => {
           if (!response.ok) {
             throw new Error('Failed to fetch products data');
@@ -377,7 +377,7 @@ function Dashboard() {
   // Fetching Monthly Sales
   const fetchMonthlySalesData = () => {
     return new Promise((resolve, reject) => {
-      fetch(`http://localhost:4000/api/sales/getmonthly`)
+      fetch(`${process.env.REACT_APP_BACKEND_URL}/api/sales/getmonthly`)
         .then((response) => {
           if (!response.ok) {
             throw new Error('Failed to fetch monthly sales data');

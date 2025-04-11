@@ -28,7 +28,7 @@ function Sales() {
       : null;
 
     fetch(
-      `http://localhost:4000/api/sales/get/${
+      `${process.env.REACT_APP_BACKEND_URL}api/sales/get/${
         authContext.user || 'guest-user-id'
       }`
     )
@@ -56,7 +56,7 @@ function Sales() {
   // Fetching Data of All Products
   const fetchProductsData = () => {
     fetch(
-      `http://localhost:4000/api/product/get/${
+      `${process.env.REACT_APP_BACKEND_URL}api/product/get/${
         authContext.user || 'guest-user-id'
       }`
     )
@@ -80,7 +80,7 @@ function Sales() {
   // Fetching Data of All Stores
   const fetchStoresData = () => {
     fetch(
-      `http://localhost:4000/api/store/get/${
+      `${process.env.REACT_APP_BACKEND_URL}api/store/get/${
         authContext.user || 'guest-user-id'
       }`
     )

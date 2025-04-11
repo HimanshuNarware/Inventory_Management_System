@@ -22,7 +22,7 @@ export default function UpdateProduct({
   };
 
   const updateProduct = () => {
-    fetch("http://localhost:4000/api/product/update", {
+    fetch(`${process.env.REACT_APP_BACKEND_URL}/api/product/update`, {
       method: "POST",
       headers: {
         "Content-type": "application/json",

@@ -36,7 +36,7 @@ function ResetPassword() {
     // Verify token validity
     const verifyToken = async () => {
       try {
-        const response = await fetch(`http://localhost:4000/api/user/verify-reset-token/${resetToken}`);
+        const response = await fetch(`${process.env.REACT_APP_BACKEND_URL}api/user/verify-reset-token/${resetToken}`);
         const data = await response.json();
         
         if (response.ok) {
@@ -80,7 +80,7 @@ function ResetPassword() {
     const loadingToastId = toast.loading('Resetting your password...');
     
     try {
-      const response = await fetch('http://localhost:4000/api/user/reset-password', {
+      const response = await fetch(`${process.env.REACT_APP_BACKEND_URL}/api/user/reset-password`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
