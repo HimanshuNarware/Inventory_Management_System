@@ -64,7 +64,7 @@ const dataLimiter = rateLimit({
     'Too many data requests from this IP, please try again after 5 minutes',
 });
 
-app.use('/', (req, res) => {
+app.get('/', (req, res) => {
   res.send('Welcome to the Inventory Management System API');
 });
 
