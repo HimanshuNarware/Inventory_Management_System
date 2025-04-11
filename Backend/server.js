@@ -11,7 +11,7 @@ const salesRoute = require('./router/sales');
 const userRoute = require('./router/user');
 const cors = require('cors');
 const User = require('./models/users');
-const Product = require('./models/Product');
+const Product = require('./models/product');
 const rateLimit = require('express-rate-limit');
 const morgan=require('morgan');
 
@@ -64,7 +64,7 @@ const dataLimiter = rateLimit({
     'Too many data requests from this IP, please try again after 5 minutes',
 });
 
-app.use('/', (req, res) => {
+app.get('/', (req, res) => {
   res.send('Welcome to the Inventory Management System API');
 });
 
