@@ -13,6 +13,7 @@ const cors = require('cors');
 const User = require('./models/users');
 const Product = require('./models/Product');
 const rateLimit = require('express-rate-limit');
+const morgan=require('morgan');
 
 
 const app = express();
@@ -20,6 +21,8 @@ const PORT = process.env.PORT||4000;
 main();
 app.use(express.json());
 app.use(cors());
+app.use(morgan('combined'));
+
 
 // Error handling for JSON parsing
 app.use((err, _req, res, next) => {
@@ -59,6 +62,10 @@ const dataLimiter = rateLimit({
   legacyHeaders: false,
   message:
     'Too many data requests from this IP, please try again after 5 minutes',
+});
+
+app.use('/', (req, res) => {
+  res.send('Welcome to the Inventory Management System API');
 });
 
 // Apply rate limiting to different API routes
