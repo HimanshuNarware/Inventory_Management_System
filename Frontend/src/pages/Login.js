@@ -5,6 +5,7 @@ import { useContext, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import AuthContext from '../AuthContext';
 import { toast } from 'react-hot-toast';
+import icon from '../assets/icons/favicon.svg'
 
 function Login() {
   const [form, setForm] = useState({
@@ -92,17 +93,18 @@ function Login() {
   };
 
   return (
-    <>
-      <div className="grid grid-cols-1 sm:grid-cols-2 h-screen  items-center place-items-center">
-        <div className="flex justify-center">
-          <img src='../assets/Astronaut helmet-amico.svg' alt="" />
+    <div className="flex bg-gradient-to-r from-gray-900 to-stone-900 min-h-screen items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
+      <div className="shadow-md  grid grid-cols-1 sm:grid-cols-2 h-fit  items-center place-items-center">
+        <div className="flex justify-center max-w-md h-full rounded-tl rounded-bl">
+          <img className='object-cover rounded-tl rounded-bl ' src={require('../assets/image/graph.jpg')} alt="" />
         </div>
-        <div className="w-full max-w-md space-y-8 p-10 rounded-lg">
+        <div className="w-full max-w-md space-y-8 p-10 rounded-tr-lg
+        rounded-br-lg bg-white">
           <div>
             <img
               className="mx-auto h-12 w-auto"
-              src={require('../assets/logo.png')}
-              alt="Your Company"
+              src={icon}
+              alt="dravyakosh"
             />
             <h2 className="mt-6 text-center text-3xl font-bold tracking-tight text-gray-900">
               Signin to your account
@@ -207,7 +209,7 @@ function Login() {
           </form>
         </div>
       </div>
-    </>
+    </div>
   );
 }
 

@@ -28,10 +28,10 @@ export default function HomeNavbar() {
   }, []);
 
   const navigation = [
+    { name: 'About us', href: '#pricing', current: false },
     { name: 'Features', href: '#features', current: false },
-    { name: 'Pricing', href: '#pricing', current: false },
     { name: 'Testimonials', href: '#testimonials', current: false },
-    { name: 'About Us', href: '#about-us', current: false },
+    { name: 'FAQ', href: '#about-us', current: false },
   ];
 
   function classNames(...classes) {
@@ -72,7 +72,7 @@ export default function HomeNavbar() {
                       scrolled ? 'text-stone-900' : 'text-white'
                     } font-bold text-xl`}>
                     <RocketLaunchIcon className="h-8 w-8 mr-2" />
-                    <span>Inventory Pro</span>
+                    <span>DravyaKosh</span>
                   </Link>
                 </div>
                 <div className="hidden sm:block sm:ml-6">

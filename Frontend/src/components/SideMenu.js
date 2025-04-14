@@ -2,6 +2,9 @@
 
 import React from 'react';
 import { Link } from 'react-router-dom';
+import icon from '../assets/icons/favicon.svg'
+import dashboardIcon from '../assets/icons/dashboard-icon.svg';
+import inventoryIcon from '../assets/icons/inventory-icon.svg';
 
 function SideMenu() {
   const localStorageData = JSON.parse(localStorage.getItem('user'));
@@ -15,7 +18,8 @@ function SideMenu() {
             className="flex items-center gap-2 rounded-lg hover:bg-gray-100 px-4 py-2 text-gray-700">
             <img
               alt="dashboard-icon"
-              src={require('../assets/icons/dashboard-icon.svg')}
+              src={dashboardIcon}
+              
               className="w-5 h-5"
             />
             <span className="text-sm font-medium"> Dashboard </span>
@@ -27,7 +31,7 @@ function SideMenu() {
                 <div className="flex items-center gap-2">
                   <img
                     alt="inventory-icon"
-                    src={require('../assets/icons/inventory-icon.svg')}
+                    src={inventoryIcon}
                     className="w-5 h-5"
                   />
                   <span className="text-sm font-medium"> Inventory </span>
@@ -72,7 +76,7 @@ function SideMenu() {
         <div className="flex items-center gap-2 bg-white p-4 hover:bg-gray-50">
           <img
             alt="Profile"
-            src={localStorageData?.imageUrl || require('../assets/logo.png')}
+            src={localStorageData?.imageUrl || icon}
             className="h-10 w-10 rounded-full object-cover"
           />
 
