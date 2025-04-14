@@ -4,7 +4,6 @@ import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import './home.css'
 import HomeNavbar from '../components/HomeNavbar';
-import InventoryPricingPage from './InventoryPricing';
 
 export default function HomePage() {
   return (
