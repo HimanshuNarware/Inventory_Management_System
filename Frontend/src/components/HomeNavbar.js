@@ -8,10 +8,12 @@ import {
   XMarkIcon as XIcon,
   RocketLaunchIcon,
 } from '@heroicons/react/24/outline';
+import icon from '../assets/icons/favicon.svg'
 
 export default function HomeNavbar() {
   const [isOpen, setIsOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
+  
 
   // Handle scroll effect for navbar
   useEffect(() => {
@@ -71,8 +73,9 @@ export default function HomeNavbar() {
                     className={`flex items-center ${
                       scrolled ? 'text-stone-900' : 'text-white'
                     } font-bold text-xl`}>
-                    <RocketLaunchIcon className="h-8 w-8 mr-2" />
-                    <span>DravyaKosh</span>
+                    {/* <RocketLaunchIcon className="h-8 w-8 mr-2" /> */}
+                    <img src={icon} alt="DravyaKosh" className="h-8 w-8 mr-2" />
+                    <span>Dravya Kosh</span>
                   </Link>
                 </div>
                 <div className="hidden sm:block sm:ml-6">

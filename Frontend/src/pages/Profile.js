@@ -155,7 +155,7 @@ function Profile() {
     try {
       // First upload to Cloudinary
       const cloudinaryResponse = await fetch(
-        'https://api.cloudinary.com/v1_1/ddhayhptm/image/upload',
+        'https://api.cloudinary.com/v1_1/dv7s18baq/image/upload',
         {
           method: 'POST',
           body: data,
