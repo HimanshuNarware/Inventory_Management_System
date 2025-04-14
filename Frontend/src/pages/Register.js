@@ -90,8 +90,11 @@ function Register() {
 
   return (
     <>
-      <div className="flex min-h-screen items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
-        <div className="w-full max-w-md space-y-8 bg-white p-10 rounded-lg shadow-md">
+      <div className="flex  min-h-screen items-center justify-center bg-gradient-to-r from-gray-900 to-stone-900 py-12 px-4 sm:px-6 lg:px-8">
+       <div className=" flex justify-center bg-white gap-10 rounded">
+       <img className="max-w-sm  object-cover rounded-tl rounded-bl" src={require('../assets/image/signup.jpg')} alt=""  />
+       <div className="w-full max-w-md space-y-8 bg-white p-5 m-3 rounded-md">
+   
           <div>
             <h2 className="mt-6 text-center text-3xl font-bold tracking-tight text-gray-900">
               Create your account
@@ -202,6 +205,8 @@ function Register() {
             </div>
           </form>
         </div>
+
+       </div>
       </div>
     </>
   );

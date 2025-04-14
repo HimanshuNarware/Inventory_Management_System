@@ -15,5 +15,76 @@
     letter-spacing: 0.1em;
 
   }
-  
-  
+  .check{
+    position: relative;
+  }
+  .check:hover::after{
+    background: rgba(136, 131, 131, 0.379);
+    color: rgba(255, 255, 255, 0.45);
+    content:"twittor"
+  }
+  .check::after{
+    content:"";
+    position: absolute;
+    top:-100%;
+    left:50%;
+    border-radius: 2px;
+    padding: 2px;
+    padding-inline: 4px;
+    font-size: 10px;
+    height:80%;
+  }
+ .eff:hover{
+fill:skyblue;
+ }
+
+ .linkedinsvg:hover{
+  fill:skyblue;
+ }
+
+
+ .linkedin{
+  position: relative;
+  margin-top: 2px;
+ }
+
+ .linkedin::after{
+  content:"";
+    position: absolute;
+    top:-100%;
+    left:50%;
+    border-radius: 2px;
+    padding: 2px;
+    padding-inline: 4px;
+    font-size: 10px;
+    height:80%;
+ }
+ .linkedin:hover::after{
+  background: rgba(136, 131, 131, 0.379);
+  color: rgba(255, 255, 255, 0.45);
+  content:"LinkedIn"
+}
+
+.email{
+position: relative;
+}
+
+.emailsvg:hover{
+  fill:skyblue;
+}
+.email::after{
+  content:"";
+  position: absolute;
+  top:-100%;
+  left:50%;
+  border-radius: 2px;
+  padding: 2px;
+  padding-inline: 4px;
+  font-size: 10px;
+  height:80%;
+}
+.email:hover::after{
+  background: rgba(136, 131, 131, 0.379);
+  color: rgba(255, 255, 255, 0.45);
+  content:"Email"
+}

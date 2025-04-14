@@ -7,6 +7,7 @@ import AuthContext from '../AuthContext';
 import NotificationContext from '../NotificationContext';
 import { Link } from 'react-router-dom';
 import NotificationDropdown from './NotificationDropdown';
+import icon from '../assets/icons/favicon.svg'
 
 const navigation = [
   {
@@ -56,7 +57,7 @@ export default function Header() {
   return (
     <>
       <div className="min-h-full">
-        <Disclosure as="nav" className="bg-gray-800">
+        <Disclosure as="nav" className="bg-gray-900">
           {({ open }) => (
             <>
               <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
@@ -66,11 +67,11 @@ export default function Header() {
                       <div className="flex justify-center items-center gap-2">
                         <img
                           className="h-8 w-8"
-                          src={require('../assets/logo.png')}
+                          src={icon}
                           alt="Inventory Management System"
                         />
-                        <span className="font-bold text-white italic">
-                          Inventory Management
+                        <span className="font-bold text-white">
+                          DravyaKosh
                         </span>
                       </div>
                     </div>
@@ -113,7 +114,7 @@ export default function Header() {
                             className="h-8 w-8 rounded-full border-2 border-gray-600"
                             src={
                               localStorageData?.imageUrl ||
-                              require('../assets/logo.png')
+                            icon
                             }
                             alt="profile"
                           />
@@ -235,7 +236,7 @@ export default function Header() {
                         className="h-12 w-12 rounded-full border-2 border-gray-600"
                         src={
                           localStorageData?.imageUrl ||
-                          require('../assets/logo.png')
+                          icon
                         }
                         alt="profile"
                       />
