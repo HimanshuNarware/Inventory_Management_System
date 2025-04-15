@@ -37,7 +37,7 @@ export default function AddStore() {
     // Show loading toast
     const loadingToastId = toast.loading('Adding store...');
 
-    fetch(`${process.env.REACT_APP_BACKEND_URL}/api/store/add`, {
+    fetch(`${process.env.REACT_APP_BACKEND_URL}api/store/add`, {
       method: 'POST',
       headers: {
         'Content-type': 'application/json',

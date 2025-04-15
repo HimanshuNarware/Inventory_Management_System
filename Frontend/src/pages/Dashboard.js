@@ -377,7 +377,7 @@ function Dashboard() {
   // Fetching Monthly Sales
   const fetchMonthlySalesData = () => {
     return new Promise((resolve, reject) => {
-      fetch(`${process.env.REACT_APP_BACKEND_URL}/api/sales/getmonthly`)
+      fetch(`${process.env.REACT_APP_BACKEND_URL}api/sales/getmonthly`)
         .then((response) => {
           if (!response.ok) {
             throw new Error('Failed to fetch monthly sales data');
