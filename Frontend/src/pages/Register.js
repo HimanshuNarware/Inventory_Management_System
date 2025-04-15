@@ -35,7 +35,7 @@ function Register() {
     // Show loading toast
     const loadingToastId = toast.loading('Creating your account...');
 
-    fetch(`${process.env.REACT_APP_BACKEND_URL}/api/register`, {
+    fetch(`${process.env.REACT_APP_BACKEND_URL}api/register`, {
       method: 'POST',
       headers: {
         'Content-type': 'application/json',

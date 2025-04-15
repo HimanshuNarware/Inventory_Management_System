@@ -80,7 +80,7 @@ function ResetPassword() {
     const loadingToastId = toast.loading('Resetting your password...');
     
     try {
-      const response = await fetch(`${process.env.REACT_APP_BACKEND_URL}/api/user/reset-password`, {
+      const response = await fetch(`${process.env.REACT_APP_BACKEND_URL}api/user/reset-password`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

@@ -17,7 +17,7 @@ function PurchaseDetails() {
 
   // Fetching Data of All Purchase items
   const fetchPurchaseData = () => {
-    fetch(`${process.env.REACT_APP_BACKEND_URL}/api/purchase/get/${authContext.user}`)
+    fetch(`${process.env.REACT_APP_BACKEND_URL}api/purchase/get/${authContext.user}`)
       .then((response) => response.json())
       .then((data) => {
         setAllPurchaseData(data);

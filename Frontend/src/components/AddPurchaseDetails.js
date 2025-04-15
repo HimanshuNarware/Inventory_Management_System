@@ -27,7 +27,7 @@ export default function AddPurchaseDetails({
 
   // POST Data
   const addSale = () => {
-    fetch(`${process.env.REACT_APP_BACKEND_URL}/api/purchase/add`, {
+    fetch(`${process.env.REACT_APP_BACKEND_URL}api/purchase/add`, {
       method: "POST",
       headers: {
         "Content-type": "application/json",
