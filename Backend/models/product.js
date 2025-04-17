@@ -37,6 +37,11 @@ const ProductSchema = new mongoose.Schema(
       trim: true,
       default: 'Uncategorized',
     },
+    price: {
+      type: Number,
+      default: 0,
+      min: [0, 'Price cannot be negative'],
+    },
     isActive: {
       type: Boolean,
       default: true,

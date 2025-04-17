@@ -27,25 +27,41 @@ function Sales() {
       ? toast.loading('Loading sales data...')
       : null;
 
+    console.log(
+      'Fetching sales data for user:',
+      authContext.user || 'guest-user-id'
+    );
+
     fetch(
       `${process.env.REACT_APP_BACKEND_URL}api/sales/get/${
         authContext.user || 'guest-user-id'
       }`
     )
       .then((response) => {
+        console.log('Sales API response status:', response.status);
         if (!response.ok) {
           return response.json().then((data) => {
             throw new Error(data.error || 'Failed to fetch sales data');
           });
         }
-        return response.json();
+        return response.text().then((text) => {
+          try {
+            return JSON.parse(text);
+          } catch (error) {
+            console.error('Error parsing JSON:', error);
+            console.log('Raw response:', text);
+            throw new Error('Invalid JSON response from server');
+          }
+        });
       })
       .then((data) => {
+        console.log('Sales data received:', data);
         setAllSalesData(data);
         if (loadingToastId) toast.dismiss(loadingToastId);
       })
       .catch((err) => {
         console.error('Error fetching sales data:', err);
+        console.error('Error details:', err.stack);
         if (loadingToastId) toast.dismiss(loadingToastId);
         toast.error(
           err.message || 'Failed to load sales data. Please try again.'
@@ -173,10 +189,12 @@ function Sales() {
                       {element.StockSold}
                     </td>
                     <td className="whitespace-nowrap px-4 py-2 text-gray-700">
-                      {element.SaleDate}
+                      {element.SaleDate
+                        ? new Date(element.SaleDate).toLocaleDateString()
+                        : 'N/A'}
                     </td>
                     <td className="whitespace-nowrap px-4 py-2 text-gray-700">
-                      ${element.TotalSaleAmount}
+                      ₹{element.TotalSaleAmount}
                     </td>
                   </tr>
                 );

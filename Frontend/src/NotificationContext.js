@@ -85,6 +85,19 @@ export const NotificationProvider = ({ children }) => {
     });
   };
 
+  // Add system notification for stock update
+  const addStockUpdateNotification = (productName, newStock) => {
+    addNotification(
+      `Stock updated: ${productName} (new stock: ${newStock})`,
+      'info',
+      'stock',
+      {
+        productName,
+        newStock,
+      }
+    );
+  };
+
   // Mark a notification as read
   const markAsRead = (id) => {
     setNotifications((prevNotifications) =>
@@ -119,7 +132,7 @@ export const NotificationProvider = ({ children }) => {
   // Add system notification for sales
   const addSaleNotification = (productName, quantity, amount) => {
     addNotification(
-      `New sale: ${quantity} x ${productName} for $${amount}`,
+      `New sale: ${quantity} x ${productName} for ₹${amount}`,
       'success',
       'sales',
       { productName, quantity, amount }
@@ -129,7 +142,7 @@ export const NotificationProvider = ({ children }) => {
   // Add system notification for purchases
   const addPurchaseNotification = (productName, quantity, amount) => {
     addNotification(
-      `New purchase: ${quantity} x ${productName} for $${amount}`,
+      `New purchase: ${quantity} x ${productName} for ₹${amount}`,
       'info',
       'purchase',
       { productName, quantity, amount }
@@ -156,6 +169,7 @@ export const NotificationProvider = ({ children }) => {
         addLowStockNotification,
         addNewProductNotification,
         addProductUpdateNotification,
+        addStockUpdateNotification,
         addStoreNotification,
         addSaleNotification,
         addPurchaseNotification,

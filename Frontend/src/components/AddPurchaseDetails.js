@@ -1,24 +1,27 @@
-import { Fragment, useRef, useState } from "react";
-import { Dialog, Transition } from "@headlessui/react";
-import { PlusIcon } from "@heroicons/react/24/outline";
+/** @format */
+
+import { Fragment, useRef, useState } from 'react';
+import { Dialog, Transition } from '@headlessui/react';
+import { PlusIcon } from '@heroicons/react/24/outline';
+import { toast } from 'react-toastify';
 
 export default function AddPurchaseDetails({
   addSaleModalSetting,
   products,
   handlePageUpdate,
-  authContext
+  authContext,
 }) {
   const [purchase, setPurchase] = useState({
     userID: authContext.user,
-    productID: "",
-    quantityPurchased: "",
-    purchaseDate: "",
-    totalPurchaseAmount: "",
+    productID: '',
+    quantityPurchased: '',
+    purchaseDate: '',
+    totalPurchaseAmount: '',
   });
   const [open, setOpen] = useState(true);
   const cancelButtonRef = useRef(null);
 
-  console.log("PPu: ", purchase);
+  console.log('PPu: ', purchase);
 
   // Handling Input Change for input fields
   const handleInputChange = (key, value) => {
@@ -27,19 +30,53 @@ export default function AddPurchaseDetails({
 
   // POST Data
   const addSale = () => {
+    // Validate form fields
+    if (
+      !purchase.productID ||
+      !purchase.quantityPurchased ||
+      !purchase.totalPurchaseAmount
+    ) {
+      toast.warning('Please fill in all required fields');
+      return;
+    }
+
+    // Show loading toast
+    const loadingToastId = toast.loading('Adding purchase...');
+
+    // Log the data being sent for debugging
+    console.log('Sending purchase data:', purchase);
+
     fetch(`${process.env.REACT_APP_BACKEND_URL}api/purchase/add`, {
-      method: "POST",
+      method: 'POST',
       headers: {
-        "Content-type": "application/json",
+        'Content-type': 'application/json',
       },
       body: JSON.stringify(purchase),
     })
+      .then((response) => {
+        if (!response.ok) {
+          return response.json().then((data) => {
+            throw new Error(data.error || 'Failed to add purchase');
+          });
+        }
+        return response.json();
+      })
       .then((result) => {
-        alert("Purchase ADDED");
+        // Dismiss loading toast
+        toast.dismiss(loadingToastId);
+        toast.success('Purchase added successfully!');
+
+        // Log the successful result
+        console.log('Purchase added successfully:', result);
+
         handlePageUpdate();
         addSaleModalSetting();
       })
-      .catch((err) => console.log(err));
+      .catch((err) => {
+        console.error('Error adding purchase:', err);
+        toast.dismiss(loadingToastId);
+        toast.error(err.message || 'Failed to add purchase. Please try again.');
+      });
   };
 
   return (
@@ -49,8 +86,7 @@ export default function AddPurchaseDetails({
         as="div"
         className="relative z-10"
         initialFocus={cancelButtonRef}
-        onClose={setOpen}
-      >
+        onClose={setOpen}>
         <Transition.Child
           as={Fragment}
           enter="ease-out duration-300"
@@ -58,8 +94,7 @@ export default function AddPurchaseDetails({
           enterTo="opacity-100"
           leave="ease-in duration-200"
           leaveFrom="opacity-100"
-          leaveTo="opacity-0"
-        >
+          leaveTo="opacity-0">
           <div className="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity" />
         </Transition.Child>
 
@@ -72,8 +107,7 @@ export default function AddPurchaseDetails({
               enterTo="opacity-100 translate-y-0 sm:scale-100"
               leave="ease-in duration-200"
               leaveFrom="opacity-100 translate-y-0 sm:scale-100"
-              leaveTo="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
-            >
+              leaveTo="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95">
               <Dialog.Panel className="relative transform overflow-hidden rounded-lg bg-white text-left shadow-xl transition-all sm:my-8 sm:w-full sm:max-w-lg overflow-y-scroll">
                 <div className="bg-white px-4 pt-5 pb-4 sm:p-6 sm:pb-4">
                   <div className="sm:flex sm:items-start">
@@ -86,8 +120,7 @@ export default function AddPurchaseDetails({
                     <div className="mt-3 text-center sm:mt-0 sm:ml-4 sm:text-left ">
                       <Dialog.Title
                         as="h3"
-                        className="text-lg  py-4 font-semibold leading-6 text-gray-900 "
-                      >
+                        className="text-lg  py-4 font-semibold leading-6 text-gray-900 ">
                         Purchase Details
                       </Dialog.Title>
                       <form action="#">
@@ -95,8 +128,7 @@ export default function AddPurchaseDetails({
                           <div>
                             <label
                               htmlFor="productID"
-                              className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
-                            >
+                              className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
                               Product Name
                             </label>
                             <select
@@ -105,8 +137,7 @@ export default function AddPurchaseDetails({
                               name="productID"
                               onChange={(e) =>
                                 handleInputChange(e.target.name, e.target.value)
-                              }
-                            >
+                              }>
                               <option selected="">Select Products</option>
                               {products.map((element, index) => {
                                 return (
@@ -120,8 +151,7 @@ export default function AddPurchaseDetails({
                           <div>
                             <label
                               htmlFor="quantityPurchased"
-                              className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
-                            >
+                              className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
                               Quantity Purchased
                             </label>
                             <input
@@ -139,8 +169,7 @@ export default function AddPurchaseDetails({
                           <div>
                             <label
                               htmlFor="totalPurchaseAmount"
-                              className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
-                            >
+                              className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
                               Total Purchase Amount
                             </label>
                             <input
@@ -152,7 +181,7 @@ export default function AddPurchaseDetails({
                                 handleInputChange(e.target.name, e.target.value)
                               }
                               className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
-                              placeholder="$299"
+                              placeholder="₹299"
                             />
                           </div>
                           <div className="h-fit w-fit">
@@ -163,8 +192,7 @@ export default function AddPurchaseDetails({
                             /> */}
                             <label
                               className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
-                              htmlFor="purchaseDate"
-                            >
+                              htmlFor="purchaseDate">
                               Purchase Date
                             </label>
                             <input
@@ -213,16 +241,14 @@ export default function AddPurchaseDetails({
                   <button
                     type="button"
                     className="inline-flex w-full justify-center rounded-md bg-blue-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-blue-500 sm:ml-3 sm:w-auto"
-                    onClick={addSale}
-                  >
+                    onClick={addSale}>
                     Add
                   </button>
                   <button
                     type="button"
                     className="mt-3 inline-flex w-full justify-center rounded-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50 sm:mt-0 sm:w-auto"
                     onClick={() => addSaleModalSetting()}
-                    ref={cancelButtonRef}
-                  >
+                    ref={cancelButtonRef}>
                     Cancel
                   </button>
                 </div>

@@ -1,19 +1,24 @@
 /** @format */
 
-import React, { useState, useEffect, useContext } from 'react';
+import React, { useState, useEffect, useContext, useMemo } from 'react';
 import AddProduct from '../components/AddProduct';
 import UpdateProduct from '../components/UpdateProduct';
+import EditStock from '../components/EditStock';
 import AuthContext from '../AuthContext';
 import { toast } from 'react-toastify';
 
 function Inventory() {
   const [showProductModal, setShowProductModal] = useState(false);
   const [showUpdateModal, setShowUpdateModal] = useState(false);
+  const [showEditStockModal, setShowEditStockModal] = useState(false);
   const [updateProduct, setUpdateProduct] = useState([]);
+  const [selectedProduct, setSelectedProduct] = useState(null);
   const [products, setAllProducts] = useState([]);
   const [searchTerm, setSearchTerm] = useState();
   const [updatePage, setUpdatePage] = useState(true);
   const [stores, setAllStores] = useState([]);
+  const [totalSalesAmount, setTotalSalesAmount] = useState(0);
+  const [salesData, setSalesData] = useState([]);
 
   const authContext = useContext(AuthContext);
   console.log('====================================');
@@ -22,7 +27,9 @@ function Inventory() {
 
   useEffect(() => {
     fetchProductsData();
+    fetchStoresData();
     fetchSalesData();
+    fetchTotalSalesAmount();
   }, [updatePage]);
 
   // Fetching Data of All Products
@@ -67,7 +74,9 @@ function Inventory() {
 
     const loadingToastId = toast.loading('Searching products...');
 
-    fetch(`${process.env.REACT_APP_BACKEND_URL}api/product/search?searchTerm=${searchTerm}`)
+    fetch(
+      `${process.env.REACT_APP_BACKEND_URL}api/product/search?searchTerm=${searchTerm}`
+    )
       .then((response) => {
         if (!response.ok) {
           return response.json().then((data) => {
@@ -93,7 +102,7 @@ function Inventory() {
   };
 
   // Fetching all stores data
-  const fetchSalesData = () => {
+  const fetchStoresData = () => {
     fetch(
       `${process.env.REACT_APP_BACKEND_URL}api/store/get/${
         authContext.user || 'guest-user-id'
@@ -116,6 +125,52 @@ function Inventory() {
       });
   };
 
+  // Fetching sales data
+  const fetchSalesData = () => {
+    fetch(
+      `${process.env.REACT_APP_BACKEND_URL}api/sales/get/${
+        authContext.user || 'guest-user-id'
+      }`
+    )
+      .then((response) => {
+        if (!response.ok) {
+          return response.json().then((data) => {
+            throw new Error(data.error || 'Failed to fetch sales data');
+          });
+        }
+        return response.json();
+      })
+      .then((data) => {
+        setSalesData(data);
+      })
+      .catch((err) => {
+        console.error('Error fetching sales data:', err);
+      });
+  };
+
+  // Fetching total sales amount
+  const fetchTotalSalesAmount = () => {
+    fetch(
+      `${process.env.REACT_APP_BACKEND_URL}api/sales/get/${
+        authContext.user || 'guest-user-id'
+      }/totalsaleamount`
+    )
+      .then((response) => {
+        if (!response.ok) {
+          return response.json().then((data) => {
+            throw new Error(data.error || 'Failed to fetch total sales amount');
+          });
+        }
+        return response.json();
+      })
+      .then((data) => {
+        setTotalSalesAmount(data.totalSaleAmount || 0);
+      })
+      .catch((err) => {
+        console.error('Error fetching total sales amount:', err);
+      });
+  };
+
   // Modal for Product ADD
   const addProductModalSetting = () => {
     setShowProductModal(!showProductModal);
@@ -126,6 +181,13 @@ function Inventory() {
     console.log('Clicked: edit');
     setUpdateProduct(selectedProductData);
     setShowUpdateModal(!showUpdateModal);
+  };
+
+  // Modal for Edit Stock
+  const editStockModalSetting = (product) => {
+    console.log('Clicked: edit stock');
+    setSelectedProduct(product);
+    setShowEditStockModal(!showEditStockModal);
   };
 
   // Delete item
@@ -149,6 +211,53 @@ function Inventory() {
     setSearchTerm(e.target.value);
     fetchSearchData();
   };
+
+  // Calculate top selling products
+  const topSellingInfo = useMemo(() => {
+    // Group sales by product ID and calculate total quantity sold
+    const productSales = {};
+    let totalSoldAmount = 0;
+
+    salesData.forEach((sale) => {
+      if (sale.ProductID && sale.ProductID._id) {
+        const productId = sale.ProductID._id;
+        if (!productSales[productId]) {
+          productSales[productId] = {
+            quantity: 0,
+            amount: 0,
+            name: sale.ProductID.name,
+          };
+        }
+        productSales[productId].quantity += sale.StockSold;
+        productSales[productId].amount += sale.TotalSaleAmount;
+        totalSoldAmount += sale.TotalSaleAmount;
+      }
+    });
+
+    // Convert to array and sort by quantity sold
+    const sortedProducts = Object.values(productSales).sort(
+      (a, b) => b.quantity - a.quantity
+    );
+
+    return {
+      count: sortedProducts.length,
+      totalAmount: totalSoldAmount,
+    };
+  }, [salesData]);
+
+  // Calculate low stock products
+  const lowStockInfo = useMemo(() => {
+    const lowStockThreshold = 10; // Define what counts as "low stock"
+    const outOfStock = products.filter((product) => product.stock === 0).length;
+    const lowStock = products.filter(
+      (product) => product.stock > 0 && product.stock <= lowStockThreshold
+    ).length;
+
+    return {
+      lowStock,
+      outOfStock,
+    };
+  }, [products]);
 
   return (
     <div className="col-span-12 lg:col-span-10  flex justify-center">
@@ -182,7 +291,7 @@ function Inventory() {
                 </div>
                 <div className="flex flex-col">
                   <span className="font-semibold text-gray-600 text-base">
-                    $2000
+                    ₹{totalSalesAmount.toLocaleString()}
                   </span>
                   <span className="font-thin text-gray-400 text-xs">
                     Revenue
@@ -197,17 +306,19 @@ function Inventory() {
               <div className="flex gap-8">
                 <div className="flex flex-col">
                   <span className="font-semibold text-gray-600 text-base">
-                    5
+                    {topSellingInfo.count}
                   </span>
                   <span className="font-thin text-gray-400 text-xs">
-                    Last 7 days
+                    Products Sold
                   </span>
                 </div>
                 <div className="flex flex-col">
                   <span className="font-semibold text-gray-600 text-base">
-                    $1500
+                    ₹{topSellingInfo.totalAmount.toLocaleString()}
                   </span>
-                  <span className="font-thin text-gray-400 text-xs">Cost</span>
+                  <span className="font-thin text-gray-400 text-xs">
+                    Revenue
+                  </span>
                 </div>
               </div>
             </div>
@@ -218,15 +329,15 @@ function Inventory() {
               <div className="flex gap-8">
                 <div className="flex flex-col">
                   <span className="font-semibold text-gray-600 text-base">
-                    12
+                    {lowStockInfo.lowStock}
                   </span>
                   <span className="font-thin text-gray-400 text-xs">
-                    Ordered
+                    Low Stock
                   </span>
                 </div>
                 <div className="flex flex-col">
                   <span className="font-semibold text-gray-600 text-base">
-                    2
+                    {lowStockInfo.outOfStock}
                   </span>
                   <span className="font-thin text-gray-400 text-xs">
                     Not in Stock
@@ -247,6 +358,13 @@ function Inventory() {
           <UpdateProduct
             updateProductData={updateProduct}
             updateModalSetting={updateProductModalSetting}
+          />
+        )}
+        {showEditStockModal && selectedProduct && (
+          <EditStock
+            product={selectedProduct}
+            onClose={() => setShowEditStockModal(false)}
+            onStockUpdated={handlePageUpdate}
           />
         )}
 
@@ -292,6 +410,9 @@ function Inventory() {
                   Stock
                 </th>
                 <th className="whitespace-nowrap px-4 py-2 text-left font-medium text-gray-900">
+                  Price
+                </th>
+                <th className="whitespace-nowrap px-4 py-2 text-left font-medium text-gray-900">
                   Description
                 </th>
                 <th className="whitespace-nowrap px-4 py-2 text-left font-medium text-gray-900">
@@ -317,6 +438,9 @@ function Inventory() {
                       {element.stock}
                     </td>
                     <td className="whitespace-nowrap px-4 py-2 text-gray-700">
+                      {element.price ? `₹${element.price}` : '-'}
+                    </td>
+                    <td className="whitespace-nowrap px-4 py-2 text-gray-700">
                       {element.description}
                     </td>
                     <td className="whitespace-nowrap px-4 py-2 text-gray-700">
@@ -327,6 +451,11 @@ function Inventory() {
                         className="text-green-700 cursor-pointer"
                         onClick={() => updateProductModalSetting(element)}>
                         Edit{' '}
+                      </span>
+                      <span
+                        className="text-blue-600 px-2 cursor-pointer"
+                        onClick={() => editStockModalSetting(element)}>
+                        Edit Stock{' '}
                       </span>
                       <span
                         className="text-red-600 px-2 cursor-pointer"

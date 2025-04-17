@@ -5,9 +5,9 @@ import { Disclosure, Menu, Transition } from '@headlessui/react';
 import { Bars3Icon, BellIcon, XMarkIcon } from '@heroicons/react/24/outline';
 import AuthContext from '../AuthContext';
 import NotificationContext from '../NotificationContext';
-import { Link } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 import NotificationDropdown from './NotificationDropdown';
-import icon from '../assets/icons/favicon.svg'
+import icon from '../assets/icons/favicon.svg';
 
 const navigation = [
   {
@@ -54,6 +54,15 @@ function classNames(...classes) {
 export default function Header() {
   const authContext = useContext(AuthContext);
   const localStorageData = JSON.parse(localStorage.getItem('user'));
+  const location = useLocation();
+
+  // Update navigation items based on current path
+  const updatedNavigation = navigation.map((item) => ({
+    ...item,
+    current:
+      location.pathname === item.href ||
+      (item.href !== '/dashboard' && location.pathname.startsWith(item.href)),
+  }));
   return (
     <>
       <div className="min-h-full">
@@ -70,15 +79,13 @@ export default function Header() {
                           src={icon}
                           alt="Inventory Management System"
                         />
-                        <span className="font-bold text-white">
-                          DravyaKosh
-                        </span>
+                        <span className="font-bold text-white">DravyaKosh</span>
                       </div>
                     </div>
 
                     {/* Desktop Navigation Links */}
                     <div className="hidden md:flex ml-10 items-center space-x-4">
-                      {navigation.map((item) => (
+                      {updatedNavigation.map((item) => (
                         <Link
                           key={item.name}
                           to={item.href}
@@ -112,10 +119,7 @@ export default function Header() {
                         <Menu.Button className="flex items-center gap-2 rounded-md bg-gray-700 px-3 py-1.5 text-sm text-white hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-800 transition-colors">
                           <img
                             className="h-8 w-8 rounded-full border-2 border-gray-600"
-                            src={
-                              localStorageData?.imageUrl ||
-                            icon
-                            }
+                            src={localStorageData?.imageUrl || icon}
                             alt="profile"
                           />
                           <div className="hidden md:block text-left">
@@ -201,7 +205,7 @@ export default function Header() {
 
               <Disclosure.Panel className="md:hidden">
                 <div className="space-y-2 px-2 pb-3 pt-2 sm:px-3">
-                  {navigation.map((item) => (
+                  {updatedNavigation.map((item) => (
                     <Link
                       to={item.href}
                       key={item.name}
@@ -234,10 +238,7 @@ export default function Header() {
                     <div className="flex-shrink-0">
                       <img
                         className="h-12 w-12 rounded-full border-2 border-gray-600"
-                        src={
-                          localStorageData?.imageUrl ||
-                          icon
-                        }
+                        src={localStorageData?.imageUrl || icon}
                         alt="profile"
                       />
                     </div>

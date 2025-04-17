@@ -1,4 +1,6 @@
-const mongoose = require("mongoose");
+/** @format */
+
+const mongoose = require('mongoose');
 
 const StoreSchema = new mongoose.Schema(
   {
@@ -25,11 +27,12 @@ const StoreSchema = new mongoose.Schema(
     },
     image: {
       type: String,
-      required: true,
+      required: false, // Making image optional
+      default: '',
     },
   },
   { timestamps: true }
 );
 
-const Store = mongoose.model("store", StoreSchema);
+const Store = mongoose.model('store', StoreSchema);
 module.exports = Store;

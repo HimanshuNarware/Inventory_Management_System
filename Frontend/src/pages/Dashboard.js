@@ -9,6 +9,7 @@ import { Chart as ChartJS, ArcElement, Tooltip, Legend } from 'chart.js';
 import { toast } from 'react-toastify';
 import { CircularProgressbar, buildStyles } from 'react-circular-progressbar';
 import 'react-circular-progressbar/dist/styles.css';
+import StoresList from '../components/StoresList';
 
 ChartJS.register(ArcElement, Tooltip, Legend);
 // Chart colors
@@ -288,7 +289,9 @@ function Dashboard() {
   // Fetching all stores data
   const fetchStoresData = () => {
     return new Promise((resolve, reject) => {
-      fetch(`${process.env.REACT_APP_BACKEND_URL}api/store/get/${authContext.user}`)
+      fetch(
+        `${process.env.REACT_APP_BACKEND_URL}api/store/get/${authContext.user}`
+      )
         .then((response) => {
           if (!response.ok) {
             throw new Error('Failed to fetch stores data');
@@ -332,7 +335,9 @@ function Dashboard() {
   // Fetching Data of All Products
   const fetchProductsData = () => {
     return new Promise((resolve, reject) => {
-      fetch(`${process.env.REACT_APP_BACKEND_URL}api/product/get/${authContext.user}`)
+      fetch(
+        `${process.env.REACT_APP_BACKEND_URL}api/product/get/${authContext.user}`
+      )
         .then((response) => {
           if (!response.ok) {
             throw new Error('Failed to fetch products data');
@@ -438,7 +443,7 @@ function Dashboard() {
               </strong>
               <p className="mt-1">
                 <span className="text-2xl font-medium text-gray-900">
-                  ${saleAmount.toFixed(2)}
+                  ₹{saleAmount.toFixed(2)}
                 </span>
               </p>
             </div>
@@ -474,7 +479,7 @@ function Dashboard() {
               </strong>
               <p className="mt-1">
                 <span className="text-2xl font-medium text-gray-900">
-                  ${purchaseAmount.toFixed(2)}
+                  ₹{purchaseAmount.toFixed(2)}
                 </span>
               </p>
             </div>
@@ -570,8 +575,13 @@ function Dashboard() {
           </div>
         </article>
 
-        {/* Charts Section - Made responsive */}
+        {/* Stores List Section */}
         <div className="bg-white rounded-lg py-6 px-4 col-span-full">
+          <StoresList stores={stores} />
+        </div>
+
+        {/* Charts Section - Made responsive */}
+        <div className="bg-white rounded-lg py-6 px-4 col-span-full mt-6">
           <div className="flex flex-col lg:flex-row justify-center items-center gap-8 w-full overflow-x-auto">
             <div className="min-w-[300px] w-full lg:w-1/2">
               <Chart

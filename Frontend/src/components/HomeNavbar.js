@@ -30,7 +30,7 @@ export default function HomeNavbar() {
   }, []);
 
   const navigation = [
-    { name: 'About us', href: '#pricing', current: false },
+    { name: 'About us', href: '#about-us', current: false },
     { name: 'Features', href: '#features', current: false },
     { name: 'Testimonials', href: '#testimonials', current: false },
     { name: 'FAQ', href: '#about-us', current: false },
