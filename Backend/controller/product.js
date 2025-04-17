@@ -22,12 +22,25 @@ const addProduct = (req, res) => {
       return res.status(400).json({ error: 'Manufacturer is required' });
     }
 
+    // Convert price to number if provided
+    let price = 0;
+    if (req.body.price) {
+      price = Number(req.body.price);
+      if (isNaN(price) || price < 0) {
+        return res
+          .status(400)
+          .json({ error: 'Price must be a valid non-negative number' });
+      }
+    }
+
     const addProduct = new Product({
       userID: req.body.userId,
       name: req.body.name,
       manufacturer: req.body.manufacturer,
       stock: 0,
+      price: price,
       description: req.body.description || '',
+      category: req.body.category || 'Uncategorized',
     });
 
     addProduct
@@ -145,14 +158,39 @@ const updateSelectedProduct = async (req, res) => {
       return res.status(400).json({ error: 'Invalid Product ID format' });
     }
 
+    // Convert price to number if provided
+    if (req.body.price !== undefined) {
+      const price = Number(req.body.price);
+      if (isNaN(price) || price < 0) {
+        return res
+          .status(400)
+          .json({ error: 'Price must be a valid non-negative number' });
+      }
+    }
+
+    // Create update object with all fields that might be updated
+    const updateFields = {
+      name: req.body.name,
+      manufacturer: req.body.manufacturer,
+      description: req.body.description || '',
+      category: req.body.category || 'Uncategorized',
+    };
+
+    // Add price to update fields if it's provided
+    if (req.body.price !== undefined) {
+      updateFields.price = Number(req.body.price);
+    }
+
+    // Add stock to update fields if it's provided
+    if (req.body.stock !== undefined) {
+      updateFields.stock = req.body.stock;
+    }
+
+    console.log('Updating product with fields:', updateFields);
+
     const updatedResult = await Product.findByIdAndUpdate(
       { _id: req.body.productID },
-      {
-        name: req.body.name,
-        manufacturer: req.body.manufacturer,
-        description: req.body.description || '',
-        // Add any other fields that need to be updated
-      },
+      updateFields,
       { new: true, runValidators: true } // Return updated document and run validators
     );
 

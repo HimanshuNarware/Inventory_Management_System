@@ -201,8 +201,8 @@ function Login() {
               <p className="mt-2 text-center text-sm text-gray-600">
                 Or{' '}
                 <span className="font-medium text-indigo-600 hover:text-indigo-500">
-                  Don't Have an Account, Please{' '}
-                  <Link to="/register"> Register now </Link>
+                <Link to="/register">  Don't Have an Account, Please{' '}
+                  Register now </Link>
                 </span>
               </p>
             </div>

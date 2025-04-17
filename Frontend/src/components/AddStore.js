@@ -14,7 +14,7 @@ export default function AddStore() {
   const [form, setForm] = useState({
     userId: authContext.user,
     name: '',
-    category: '',
+    category: 'Electronics', // Default value to match the selected option
     address: '',
     city: '',
     image: '',
@@ -27,12 +27,20 @@ export default function AddStore() {
   const [open, setOpen] = useState(true);
   const cancelButtonRef = useRef(null);
 
-  const addProduct = () => {
+  const addStore = () => {
     // Validate form fields
     if (!form.name || !form.category || !form.address || !form.city) {
       toast.warning('Please fill in all required fields');
       return;
     }
+
+    // Image is now optional, but we'll show a warning if it's missing
+    if (!form.image) {
+      toast.info('No store image provided. You can add one later.');
+    }
+
+    // Log the form data for debugging
+    console.log('Form data being submitted:', form);
 
     // Show loading toast
     const loadingToastId = toast.loading('Adding store...');
@@ -44,13 +52,29 @@ export default function AddStore() {
       },
       body: JSON.stringify(form),
     })
-      .then((response) => {
+      .then(async (response) => {
+        // Always parse the JSON response first
+        const data = await response.json();
+
+        // Then check if the response was successful
         if (!response.ok) {
-          return response.json().then((data) => {
+          // If we have detailed error information, use it
+          if (data.details && typeof data.details === 'object') {
+            // Format validation errors
+            const errorMessages = Object.values(data.details).join(', ');
+            throw new Error(
+              errorMessages || data.error || 'Failed to add store'
+            );
+          } else if (data.details && typeof data.details === 'string') {
+            throw new Error(
+              data.details || data.error || 'Failed to add store'
+            );
+          } else {
             throw new Error(data.error || 'Failed to add store');
-          });
+          }
         }
-        return response.json();
+
+        return data;
       })
       .then((result) => {
         // Dismiss loading toast
@@ -60,8 +84,14 @@ export default function AddStore() {
         // Add to notification center
         notificationContext.addStoreNotification(form.name, 'added');
 
-        window.location.reload();
-        setOpen(false);
+        // Log the successful result
+        console.log('Store added successfully:', result);
+
+        // Delay the reload slightly to ensure the user sees the success message
+        setTimeout(() => {
+          window.location.reload();
+          setOpen(false);
+        }, 1000);
       })
       .catch((err) => {
         console.error('Error adding store:', err);
@@ -72,35 +102,66 @@ export default function AddStore() {
 
   // Uploading image to cloudinary
   const uploadImage = async (image) => {
-    const data = new FormData();
-    data.append('file', image);
-    data.append('upload_preset', 'inventoryapp');
+    if (!image) {
+      toast.warning('No image selected');
+      return;
+    }
 
     // Show loading toast
     const loadingToastId = toast.loading('Uploading image...');
 
     try {
-      const response = await fetch(
-        'https://api.cloudinary.com/v1_1/dv7s18baq/image/upload',
-        {
-          method: 'POST',
-          body: data,
-        }
+      // Log the Cloudinary configuration for debugging
+      console.log('Cloudinary config:', {
+        uploadPreset:
+          process.env.REACT_APP_CLOUDINARY_UPLOAD_PRESET || 'ml_default',
+        apiUrl: process.env.REACT_APP_CLOUDINARY_API_URL,
+        cloudName: process.env.REACT_APP_CLOUDINARY_CLOUD_NAME,
+      });
+
+      // Create form data
+      const data = new FormData();
+      data.append('file', image);
+      data.append(
+        'upload_preset',
+        process.env.REACT_APP_CLOUDINARY_UPLOAD_PRESET || 'ml_default'
+      );
+      data.append(
+        'cloud_name',
+        process.env.REACT_APP_CLOUDINARY_CLOUD_NAME || 'dv7s18baq'
       );
 
+      // Make the API request
+      const response = await fetch(process.env.REACT_APP_CLOUDINARY_API_URL, {
+        method: 'POST',
+        body: data,
+      });
+
+      // Check for non-OK response
       if (!response.ok) {
-        throw new Error('Failed to upload image');
+        const errorText = await response.text();
+        console.error('Cloudinary error response:', errorText);
+        throw new Error(
+          `Failed to upload image: ${response.status} ${response.statusText}`
+        );
       }
 
+      // Parse the response
       const imageData = await response.json();
-      setForm({ ...form, image: imageData.url });
+      console.log('Cloudinary response:', imageData);
 
-      toast.dismiss(loadingToastId);
-      toast.success('Store image uploaded successfully!');
+      // Update the form with the image URL
+      if (imageData.secure_url) {
+        setForm({ ...form, image: imageData.secure_url });
+        toast.dismiss(loadingToastId);
+        toast.success('Store image uploaded successfully!');
+      } else {
+        throw new Error('Invalid response from Cloudinary');
+      }
     } catch (error) {
       console.error('Error uploading image:', error);
       toast.dismiss(loadingToastId);
-      toast.error('Failed to upload image. Please try again.');
+      toast.error(`Failed to upload image: ${error.message}`);
     }
   };
 
@@ -271,7 +332,7 @@ export default function AddStore() {
                   <button
                     type="button"
                     className="inline-flex w-full justify-center rounded-md bg-blue-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-blue-500 sm:ml-3 sm:w-auto"
-                    onClick={addProduct}>
+                    onClick={addStore}>
                     Add Store
                   </button>
                   <button

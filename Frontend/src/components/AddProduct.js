@@ -18,7 +18,23 @@ export default function AddProduct({
     name: '',
     manufacturer: '',
     description: '',
+    category: 'Electronics', // Default category
+    price: '',
   });
+
+  // Product categories
+  const categories = [
+    'Electronics',
+    'Laptops',
+    'Mobile Phones',
+    'Tablets',
+    'Accessories',
+    'Home Appliances',
+    'Kitchen Appliances',
+    'Audio & Video',
+    'Gaming',
+    'Other',
+  ];
   console.log('----', product);
   const [open, setOpen] = useState(true);
   const cancelButtonRef = useRef(null);
@@ -31,6 +47,15 @@ export default function AddProduct({
     // Validate form fields
     if (!product.name || !product.manufacturer) {
       toast.warning('Please fill in all required fields');
+      return;
+    }
+
+    // Validate price if provided
+    if (
+      product.price &&
+      (isNaN(Number(product.price)) || Number(product.price) < 0)
+    ) {
+      toast.warning('Price must be a valid non-negative number');
       return;
     }
 
@@ -68,8 +93,13 @@ export default function AddProduct({
       })
       .catch((err) => {
         console.error('Error adding product:', err);
+        console.error('Product data sent:', JSON.stringify(product, null, 2));
         toast.dismiss(loadingToastId);
-        toast.error(err.message || 'Failed to add product. Please try again.');
+        toast.error(
+          `Failed to add product: ${
+            err.message || 'Unexpected error'
+          }. Please check console for details.`
+        );
       });
   };
 
@@ -155,12 +185,32 @@ export default function AddProduct({
                               placeholder="Ex. Apple"
                             />
                           </div>
-                          {/* <div>
+                          <div>
                             <label
-                              for="price"
-                              className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
-                            >
-                              Price
+                              htmlFor="category"
+                              className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
+                              Category
+                            </label>
+                            <select
+                              id="category"
+                              name="category"
+                              value={product.category}
+                              onChange={(e) =>
+                                handleInputChange(e.target.name, e.target.value)
+                              }
+                              className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500">
+                              {categories.map((category) => (
+                                <option key={category} value={category}>
+                                  {category}
+                                </option>
+                              ))}
+                            </select>
+                          </div>
+                          <div>
+                            <label
+                              htmlFor="price"
+                              className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
+                              Price (₹)
                             </label>
                             <input
                               type="number"
@@ -171,28 +221,11 @@ export default function AddProduct({
                                 handleInputChange(e.target.name, e.target.value)
                               }
                               className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
-                              placeholder="$299"
+                              placeholder="₹0.00"
+                              min="0"
+                              step="0.01"
                             />
                           </div>
-                          <div>
-                            <label
-                              for="quantity"
-                              className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
-                            >
-                              Quantity
-                            </label>
-                            <input
-                              type="number"
-                              name="quantity"
-                              id="quantity"
-                              value={product.quantity}
-                              onChange={(e) =>
-                                handleInputChange(e.target.name, e.target.value)
-                              }
-                              className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
-                              placeholder="0 - 999"
-                            />
-                          </div> */}
 
                           <div className="sm:col-span-2">
                             <label

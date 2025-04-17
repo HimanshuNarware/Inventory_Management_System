@@ -5,6 +5,8 @@ import AuthContext from '../AuthContext';
 import NotificationContext from '../NotificationContext';
 import { toast } from 'react-toastify';
 import UploadImage from '../components/UploadImage';
+import UserStores from '../components/UserStores';
+import profileImg from '../assets/image/profile.png';
 
 function Profile() {
   const authContext = useContext(AuthContext);
@@ -148,14 +150,17 @@ function Profile() {
   const uploadImage = async (image) => {
     const data = new FormData();
     data.append('file', image);
-    data.append('upload_preset', 'inventoryapp');
+    data.append(
+      'upload_preset',
+      process.env.REACT_APP_CLOUDINARY_UPLOAD_PRESET || 'ml_default'
+    );
 
     const loadingToastId = toast.loading('Uploading image...');
 
     try {
       // First upload to Cloudinary
       const cloudinaryResponse = await fetch(
-        'https://api.cloudinary.com/v1_1/dv7s18baq/image/upload',
+        process.env.REACT_APP_CLOUDINARY_API_URL,
         {
           method: 'POST',
           body: data,
@@ -219,7 +224,7 @@ function Profile() {
   return (
     <div className="col-span-12 lg:col-span-10">
       <div className="flex flex-col items-center justify-center py-8 px-4">
-        <div className="w-full max-w-2xl bg-white rounded-lg shadow-md p-6">
+        <div className="w-full max-w-3xl bg-white rounded-lg shadow-md p-6">
           <div className="flex justify-between items-center mb-6">
             <h2 className="text-2xl font-bold text-gray-800">Profile</h2>
             {!isEditing ? (
@@ -241,7 +246,7 @@ function Profile() {
             <div className="flex flex-col md:flex-row gap-6">
               <div className="flex flex-col items-center">
                 <img
-                  src={user.imageUrl || 'https://via.placeholder.com/150'}
+                  src={user.imageUrl || profileImg}
                   alt="Profile"
                   className="w-32 h-32 rounded-full object-cover border-2 border-indigo-500"
                 />
@@ -358,6 +363,13 @@ function Profile() {
                 </button>
               </div>
             </form>
+          )}
+
+          {/* Only show stores when not editing */}
+          {!isEditing && user && user._id && (
+            <div className="border-t mt-8 pt-6">
+              <UserStores userId={user._id} />
+            </div>
           )}
         </div>
       </div>

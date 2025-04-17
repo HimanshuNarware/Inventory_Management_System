@@ -1,42 +1,45 @@
-import React from "react";
+/** @format */
+
+import React from 'react';
 
 const plans = [
   {
-    name: "Starter",
-    price: "$0/month",
-    description: "Perfect for small retailers just getting started.",
+    name: 'Starter',
+    price: '₹0/month',
+    description: 'Perfect for small retailers just getting started.',
     features: [
-      "Basic Inventory Tracking",
-      "Single Warehouse Support",
-      "Email Support",
+      'Basic Inventory Tracking',
+      'Single Warehouse Support',
+      'Email Support',
     ],
-    buttonText: "Start Free",
+    buttonText: 'Start Free',
     highlighted: false,
   },
   {
-    name: "Business",
-    price: "$49/month",
-    description: "Designed for growing businesses managing multiple warehouses.",
+    name: 'Business',
+    price: '₹500/month',
+    description:
+      'Designed for growing businesses managing multiple warehouses.',
     features: [
-      "Multi-Warehouse Support",
-      "Low Stock Alerts",
-      "Role-based User Access",
-      "Priority Email Support",
+      'Multi-Warehouse Support',
+      'Low Stock Alerts',
+      'Role-based User Access',
+      'Priority Email Support',
     ],
-    buttonText: "Upgrade Now",
+    buttonText: 'Upgrade Now',
     highlighted: true,
   },
   {
-    name: "Enterprise",
-    price: "Custom Pricing",
-    description: "For large-scale operations with advanced needs.",
+    name: 'Enterprise',
+    price: 'Custom Pricing',
+    description: 'For large-scale operations with advanced needs.',
     features: [
-      "Unlimited Warehouses",
-      "API Access & Integrations",
-      "Dedicated Account Manager",
-      "24/7 Support",
+      'Unlimited Warehouses',
+      'API Access & Integrations',
+      'Dedicated Account Manager',
+      '24/7 Support',
     ],
-    buttonText: "Contact Sales",
+    buttonText: 'Contact Sales',
     highlighted: false,
   },
 ];
@@ -55,12 +58,15 @@ const InventoryPricingPage = () => {
           <div
             key={idx}
             className={`rounded-xl border ${
-              plan.highlighted ? "border-blue-600 shadow-lg" : "border-gray-200"
-            } bg-white p-8 flex flex-col justify-between`}
-          >
+              plan.highlighted ? 'border-blue-600 shadow-lg' : 'border-gray-200'
+            } bg-white p-8 flex flex-col justify-between`}>
             <div>
-              <h3 className="text-xl font-semibold text-gray-900 mb-2">{plan.name}</h3>
-              <p className="text-3xl font-bold text-gray-800 mb-4">{plan.price}</p>
+              <h3 className="text-xl font-semibold text-gray-900 mb-2">
+                {plan.name}
+              </h3>
+              <p className="text-3xl font-bold text-gray-800 mb-4">
+                {plan.price}
+              </p>
               <p className="text-gray-600 mb-6">{plan.description}</p>
               <ul className="text-left space-y-3">
                 {plan.features.map((feature, i) => (
@@ -74,10 +80,9 @@ const InventoryPricingPage = () => {
             <button
               className={`mt-8 w-full py-3 px-4 rounded-md font-semibold transition ${
                 plan.highlighted
-                  ? "bg-blue-600 text-white hover:bg-blue-700"
-                  : "bg-gray-200 text-gray-800 hover:bg-gray-300"
-              }`}
-            >
+                  ? 'bg-blue-600 text-white hover:bg-blue-700'
+                  : 'bg-gray-200 text-gray-800 hover:bg-gray-300'
+              }`}>
               {plan.buttonText}
             </button>
           </div>

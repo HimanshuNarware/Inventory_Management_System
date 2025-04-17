@@ -1,17 +1,38 @@
-import { Fragment, useRef, useState } from "react";
-import { Dialog, Transition } from "@headlessui/react";
-import { PlusIcon } from "@heroicons/react/24/outline";
+/** @format */
+
+import { Fragment, useRef, useState } from 'react';
+import { Dialog, Transition } from '@headlessui/react';
+import { PlusIcon } from '@heroicons/react/24/outline';
+import { toast } from 'react-toastify';
 
 export default function UpdateProduct({
   updateProductData,
   updateModalSetting,
 }) {
-  const { _id, name, manufacturer, description } = updateProductData;
+  const { _id, name, manufacturer, description, category, price } =
+    updateProductData;
+
+  // Product categories
+  const categories = [
+    'Electronics',
+    'Laptops',
+    'Mobile Phones',
+    'Tablets',
+    'Accessories',
+    'Home Appliances',
+    'Kitchen Appliances',
+    'Audio & Video',
+    'Gaming',
+    'Other',
+  ];
+
   const [product, setProduct] = useState({
     productID: _id,
     name: name,
     manufacturer: manufacturer,
     description: description,
+    category: category || 'Electronics',
+    price: price || '',
   });
   const [open, setOpen] = useState(true);
   const cancelButtonRef = useRef(null);
@@ -22,18 +43,53 @@ export default function UpdateProduct({
   };
 
   const updateProduct = () => {
+    // Validate form fields
+    if (!product.name || !product.manufacturer) {
+      toast.warning('Please fill in all required fields');
+      return;
+    }
+
+    // Validate price if provided
+    if (
+      product.price &&
+      (isNaN(Number(product.price)) || Number(product.price) < 0)
+    ) {
+      toast.warning('Price must be a valid non-negative number');
+      return;
+    }
+
+    // Show loading toast
+    const loadingToastId = toast.loading('Updating product...');
+
     fetch(`${process.env.REACT_APP_BACKEND_URL}api/product/update`, {
-      method: "POST",
+      method: 'POST',
       headers: {
-        "Content-type": "application/json",
+        'Content-type': 'application/json',
       },
       body: JSON.stringify(product),
     })
-      .then((result) => {
-        alert("Product Updated");
-        setOpen(false);
+      .then((response) => {
+        if (!response.ok) {
+          return response.json().then((data) => {
+            throw new Error(data.error || 'Failed to update product');
+          });
+        }
+        return response.json();
       })
-      .catch((err) => console.log(err));
+      .then((result) => {
+        // Dismiss loading toast
+        toast.dismiss(loadingToastId);
+        toast.success('Product updated successfully!');
+        setOpen(false);
+        updateModalSetting();
+      })
+      .catch((err) => {
+        console.error('Error updating product:', err);
+        toast.dismiss(loadingToastId);
+        toast.error(
+          err.message || 'Failed to update product. Please try again.'
+        );
+      });
   };
 
   return (
@@ -43,8 +99,7 @@ export default function UpdateProduct({
         as="div"
         className="relative z-10"
         initialFocus={cancelButtonRef}
-        onClose={setOpen}
-      >
+        onClose={setOpen}>
         <Transition.Child
           as={Fragment}
           enter="ease-out duration-300"
@@ -52,8 +107,7 @@ export default function UpdateProduct({
           enterTo="opacity-100"
           leave="ease-in duration-200"
           leaveFrom="opacity-100"
-          leaveTo="opacity-0"
-        >
+          leaveTo="opacity-0">
           <div className="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity" />
         </Transition.Child>
 
@@ -66,8 +120,7 @@ export default function UpdateProduct({
               enterTo="opacity-100 translate-y-0 sm:scale-100"
               leave="ease-in duration-200"
               leaveFrom="opacity-100 translate-y-0 sm:scale-100"
-              leaveTo="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
-            >
+              leaveTo="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95">
               <Dialog.Panel className="relative transform overflow-hidden rounded-lg bg-white text-left shadow-xl transition-all sm:my-8 sm:w-full sm:max-w-lg">
                 <div className="bg-white px-4 pt-5 pb-4 sm:p-6 sm:pb-4">
                   <div className="sm:flex sm:items-start">
@@ -80,8 +133,7 @@ export default function UpdateProduct({
                     <div className="mt-3 text-center sm:mt-0 sm:ml-4 sm:text-left ">
                       <Dialog.Title
                         as="h3"
-                        className="text-lg font-semibold leading-6 text-gray-900 "
-                      >
+                        className="text-lg font-semibold leading-6 text-gray-900 ">
                         Update Product
                       </Dialog.Title>
                       <form action="#">
@@ -89,8 +141,7 @@ export default function UpdateProduct({
                           <div>
                             <label
                               htmlFor="name"
-                              className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
-                            >
+                              className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
                               Name
                             </label>
                             <input
@@ -108,8 +159,7 @@ export default function UpdateProduct({
                           <div>
                             <label
                               htmlFor="manufacturer"
-                              className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
-                            >
+                              className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
                               Manufacturer
                             </label>
                             <input
@@ -124,11 +174,51 @@ export default function UpdateProduct({
                               placeholder="Ex. Apple"
                             />
                           </div>
+                          <div>
+                            <label
+                              htmlFor="category"
+                              className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
+                              Category
+                            </label>
+                            <select
+                              id="category"
+                              name="category"
+                              value={product.category}
+                              onChange={(e) =>
+                                handleInputChange(e.target.name, e.target.value)
+                              }
+                              className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500">
+                              {categories.map((cat) => (
+                                <option key={cat} value={cat}>
+                                  {cat}
+                                </option>
+                              ))}
+                            </select>
+                          </div>
+                          <div>
+                            <label
+                              htmlFor="price"
+                              className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
+                              Price (₹)
+                            </label>
+                            <input
+                              type="number"
+                              name="price"
+                              id="price"
+                              value={product.price}
+                              onChange={(e) =>
+                                handleInputChange(e.target.name, e.target.value)
+                              }
+                              className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
+                              placeholder="₹0.00"
+                              min="0"
+                              step="0.01"
+                            />
+                          </div>
                           <div className="sm:col-span-2">
                             <label
                               htmlFor="description"
-                              className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
-                            >
+                              className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
                               Description
                             </label>
                             <textarea
@@ -140,8 +230,7 @@ export default function UpdateProduct({
                               value={product.description}
                               onChange={(e) =>
                                 handleInputChange(e.target.name, e.target.value)
-                              }
-                            >
+                              }>
                               Standard glass, 3.8GHz 8-core 10th-generation
                               Intel Core i7 processor, Turbo Boost up to 5.0GHz,
                               16GB 2666MHz DDR4 memory, Radeon Pro 5500 XT with
@@ -184,16 +273,14 @@ export default function UpdateProduct({
                   <button
                     type="button"
                     className="inline-flex w-full justify-center rounded-md bg-blue-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-blue-500 sm:ml-3 sm:w-auto"
-                    onClick={updateProduct}
-                  >
+                    onClick={updateProduct}>
                     Update Product
                   </button>
                   <button
                     type="button"
                     className="mt-3 inline-flex w-full justify-center rounded-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50 sm:mt-0 sm:w-auto"
                     onClick={() => updateModalSetting()}
-                    ref={cancelButtonRef}
-                  >
+                    ref={cancelButtonRef}>
                     Cancel
                   </button>
                 </div>

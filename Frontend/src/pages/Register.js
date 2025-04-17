@@ -70,18 +70,27 @@ function Register() {
   const uploadImage = async (image) => {
     const data = new FormData();
     data.append('file', image);
-    data.append('upload_preset', 'inventoryapp');
+    data.append(
+      'upload_preset',
+      process.env.REACT_APP_CLOUDINARY_UPLOAD_PRESET || 'ml_default'
+    );
 
-    await fetch('https://api.cloudinary.com/v1_1/dv7s18baq/image/upload', {
+    await fetch(process.env.REACT_APP_CLOUDINARY_API_URL, {
       method: 'POST',
       body: data,
     })
       .then((res) => res.json())
       .then((data) => {
         setForm({ ...form, imageUrl: data.url });
-        alert('Image Successfully Uploaded');
+        authContext.notify('Image Successfully Uploaded', 'success');
       })
-      .catch((error) => console.log(error));
+      .catch((error) => {
+        console.error('Image upload error:', error);
+        authContext.notify(
+          'Failed to upload image. Please try again.',
+          'error'
+        );
+      });
   };
 
   const handleSubmit = (e) => {

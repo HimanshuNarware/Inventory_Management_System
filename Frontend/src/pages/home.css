@@ -21,7 +21,7 @@
   .check:hover::after{
     background: rgba(136, 131, 131, 0.379);
     color: rgba(255, 255, 255, 0.45);
-    content:"twittor"
+    content:"Twittor"
   }
   .check::after{
     content:"";

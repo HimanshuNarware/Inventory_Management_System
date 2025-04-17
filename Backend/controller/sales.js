@@ -6,6 +6,8 @@ const soldStock = require('../controller/soldStock');
 // Add Sales
 const addSales = (req, res) => {
   try {
+    console.log('Add sale request body:', req.body);
+
     // Validate required fields
     if (!req.body.userID) {
       return res.status(400).json({ error: 'User ID is required' });
@@ -25,18 +27,35 @@ const addSales = (req, res) => {
         .json({ error: 'Valid stock sold quantity is required' });
     }
 
+    // Ensure totalSaleAmount is a number
+    const totalSaleAmount = Number(req.body.totalSaleAmount);
+    if (isNaN(totalSaleAmount)) {
+      return res
+        .status(400)
+        .json({ error: 'Total sale amount must be a valid number' });
+    }
+
+    // Format the date properly
+    let saleDate = req.body.saleDate;
+    if (!saleDate) {
+      saleDate = new Date().toISOString().split('T')[0];
+    }
+
     const addSale = new Sales({
       userID: req.body.userID,
       ProductID: req.body.productID,
       StoreID: req.body.storeID,
-      StockSold: req.body.stockSold,
-      SaleDate: req.body.saleDate || new Date().toISOString().split('T')[0],
-      TotalSaleAmount: req.body.totalSaleAmount,
+      StockSold: Number(req.body.stockSold),
+      SaleDate: saleDate,
+      TotalSaleAmount: totalSaleAmount,
     });
+
+    console.log('Sale object to save:', addSale);
 
     addSale
       .save()
       .then((result) => {
+        console.log('Sale saved successfully:', result);
         soldStock(req.body.productID, req.body.stockSold);
         res.status(200).json(result);
       })
@@ -74,12 +93,17 @@ const getSalesData = async (req, res) => {
         ? {} // For guest users, show all sales
         : { userID: req.params.userID };
 
+    console.log('Fetching sales with query:', query);
+
     const findAllSalesData = await Sales.find(query)
       .sort({ _id: -1 })
       .populate('ProductID')
       .populate('StoreID'); // -1 for descending order
 
-    res.json(findAllSalesData);
+    console.log('Sales data found:', findAllSalesData.length, 'records');
+
+    // Return empty array instead of null/undefined to prevent parsing issues
+    res.json(findAllSalesData || []);
   } catch (error) {
     console.error('Error fetching sales data:', error);
     res.status(500).json({
